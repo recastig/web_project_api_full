@@ -6,8 +6,8 @@ Projeto final do bootcamp, unindo front-end (React) e back-end (Node.js/Express 
 
 ## Links
 
-- **Frontend em produção:** [Em breve]
-- **Backend API:** [Em breve]
+- **Frontend em produção:** https://web-project-api-full-lake.vercel.app/
+- **Backend API:** https://around-api-full.onrender.com
 
 ## Como rodar localmente
 
