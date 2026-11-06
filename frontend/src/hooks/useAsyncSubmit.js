@@ -11,7 +11,8 @@ export default function useAsyncSubmit() {
     try {
       return await action();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Não foi possível concluir a operação.");
+      const message = err instanceof Error ? err.message : "Não foi possível concluir a operação.";
+      setError(message.replace(/^Erro\s*:?\s*400\s*[-:]\s*/i, ""));
       return undefined;
     } finally {
       setIsLoading(false);
