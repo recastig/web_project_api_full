@@ -1,13 +1,15 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import useAsyncSubmit from "../../hooks/useAsyncSubmit";
 
 export default function Login({ handleLogin }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const { isLoading, submit } = useAsyncSubmit();
 
   function handleSubmit(e) {
     e.preventDefault();
-    handleLogin({ email, password });
+    submit(() => handleLogin({ email, password }));
   }
 
   return (
@@ -30,8 +32,8 @@ export default function Login({ handleLogin }) {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
-        <button className="auth__button" type="submit">
-          Entrar
+        <button className="auth__button" type="submit" disabled={isLoading}>
+          {isLoading ? "Entrando..." : "Entrar"}
         </button>
       </form>
       <p className="auth__link">

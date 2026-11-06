@@ -9,6 +9,7 @@ import ProtectedRoute from "./ProtectedRoute/ProtectedRoute";
 import InfoTooltip from "./InfoTooltip/InfoTooltip";
 import api from "../utils/api";
 import * as auth from "../utils/auth";
+import { getErrorMessage } from "../utils/http";
 import { CurrentUserContext } from "../contexts/CurrentUserContext";
 import AppContext from "../contexts/AppContext";
 
@@ -20,6 +21,7 @@ function App() {
   const [userEmail, setUserEmail] = useState("");
   const [isInfoTooltipOpen, setIsInfoTooltipOpen] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [tooltipMessage, setTooltipMessage] = useState("");
   const [isCheckingToken, setIsCheckingToken] = useState(() =>
     Boolean(localStorage.getItem("jwt")),
   );
@@ -66,22 +68,26 @@ function App() {
       .catch((error) => console.error(error));
   }, [isLoggedIn]);
 
+  function showError(error) {
+    setIsSuccess(false);
+    setTooltipMessage(getErrorMessage(error));
+    setIsInfoTooltipOpen(true);
+  }
+
   function handleRegistration({ email, password }) {
-    auth
+    return auth
       .register(email, password)
       .then(() => {
         setIsSuccess(true);
+        setTooltipMessage("");
         setIsInfoTooltipOpen(true);
         navigate("/signin");
       })
-      .catch(() => {
-        setIsSuccess(false);
-        setIsInfoTooltipOpen(true);
-      });
+      .catch(showError);
   }
 
   function handleLogin({ email, password }) {
-    auth
+    return auth
       .authorize(email, password)
       .then((data) => {
         localStorage.setItem("jwt", data.token);
@@ -91,10 +97,7 @@ function App() {
         setIsLoggedIn(true);
         navigate("/");
       })
-      .catch(() => {
-        setIsSuccess(false);
-        setIsInfoTooltipOpen(true);
-      });
+      .catch(showError);
   }
 
   function handleSignOut() {
@@ -114,23 +117,17 @@ function App() {
   }
 
   function handleUpdateUser(data) {
-    api
-      .updateUserInfo(data)
-      .then((newData) => {
-        setCurrentUser(newData);
-        handleClosePopup();
-      })
-      .catch((error) => console.error(error));
+    return api.updateUserInfo(data).then((newData) => {
+      setCurrentUser(newData);
+      handleClosePopup();
+    });
   }
 
   function handleUpdateAvatar(data) {
-    api
-      .updateAvatar(data.avatar)
-      .then((newData) => {
-        setCurrentUser(newData);
-        handleClosePopup();
-      })
-      .catch((error) => console.error(error));
+    return api.updateAvatar(data.avatar).then((newData) => {
+      setCurrentUser(newData);
+      handleClosePopup();
+    });
   }
 
   function handleCardLike(card) {
@@ -144,29 +141,23 @@ function App() {
           ),
         );
       })
-      .catch((error) => console.error(error));
+      .catch(showError);
   }
 
   function handleCardDelete(card) {
-    api
-      .deleteCard(card._id)
-      .then(() => {
-        setCards((state) =>
-          state.filter((currentCard) => currentCard._id !== card._id),
-        );
-        handleClosePopup();
-      })
-      .catch((error) => console.error(error));
+    return api.deleteCard(card._id).then(() => {
+      setCards((state) =>
+        state.filter((currentCard) => currentCard._id !== card._id),
+      );
+      handleClosePopup();
+    });
   }
 
   function handleAddPlaceSubmit(data) {
-    api
-      .addCard(data)
-      .then((newCard) => {
-        setCards((state) => [newCard, ...state]);
-        handleClosePopup();
-      })
-      .catch((error) => console.error(error));
+    return api.addCard(data).then((newCard) => {
+      setCards((state) => [newCard, ...state]);
+      handleClosePopup();
+    });
   }
 
   return (
@@ -233,6 +224,7 @@ function App() {
             isOpen={isInfoTooltipOpen}
             onClose={() => setIsInfoTooltipOpen(false)}
             isSuccess={isSuccess}
+            message={tooltipMessage}
           />
         </div>
       </CurrentUserContext.Provider>

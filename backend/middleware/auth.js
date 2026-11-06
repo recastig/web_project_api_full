@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { JWT_SECRET } = require("../utils/config");
 
 const handleAuthError = (res) => {
   res.status(403).send({ message: "Autorização necessária" });
@@ -12,7 +13,7 @@ module.exports = (req, res, next) => {
   const token = authorization.replace("Bearer ", "");
   let payload;
   try {
-    payload = jwt.verify(token, "super-strong-secret");
+    payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
     return handleAuthError(res);
   }

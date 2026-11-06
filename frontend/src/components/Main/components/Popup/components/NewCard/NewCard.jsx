@@ -1,8 +1,10 @@
 import { useState } from "react";
+import useAsyncSubmit from "../../../../../../hooks/useAsyncSubmit";
 
 export default function NewCard({ onAddPlaceSubmit }) {
   const [name, setName] = useState("");
   const [link, setLink] = useState("");
+  const { isLoading, error, submit } = useAsyncSubmit();
 
   function handleNameChange(event) {
     setName(event.target.value);
@@ -15,7 +17,7 @@ export default function NewCard({ onAddPlaceSubmit }) {
   function handleSubmit(event) {
     event.preventDefault();
 
-    onAddPlaceSubmit({ name, link });
+    submit(() => onAddPlaceSubmit({ name, link }));
   }
 
   return (
@@ -53,8 +55,20 @@ export default function NewCard({ onAddPlaceSubmit }) {
       <span className="popup__error" id="card-link-error">
         Por favor, insira um endereço web.
       </span>
-      <button className="button popup__button" type="submit">
-        Criar
+      <span
+        className={`popup__error ${error ? "popup__error_visible" : ""}`}
+        role="alert"
+      >
+        {error}
+      </span>
+      <button
+        className={`button popup__button ${
+          isLoading ? "popup__button_inactive" : ""
+        }`}
+        type="submit"
+        disabled={isLoading}
+      >
+        {isLoading ? "Criando..." : "Criar"}
       </button>
     </form>
   );

@@ -1,9 +1,13 @@
-export default function InfoTooltip({ isOpen, onClose, isSuccess }) {
+export default function InfoTooltip({ isOpen, onClose, isSuccess, message }) {
   if (!isOpen) return null;
 
   function handleOverlayClick(evt) {
     if (evt.target === evt.currentTarget) onClose();
   }
+
+  const defaultMessage = isSuccess
+    ? "Sucesso! Faça seu login."
+    : "Ops, algo deu errado! Por favor, tente novamente.";
 
   return (
     <div className="popup popup_is-opened" onMouseDown={handleOverlayClick}>
@@ -21,11 +25,7 @@ export default function InfoTooltip({ isOpen, onClose, isSuccess }) {
             <div className="popup__tooltip-icon_error">✕</div>
           )}
         </div>
-        <p className="popup__tooltip-text">
-          {isSuccess
-            ? "Sucesso! Faça seu login."
-            : "Ops, algo deu errado! Por favor, tente novamente."}
-        </p>
+        <p className="popup__tooltip-text">{message || defaultMessage}</p>
       </div>
     </div>
   );

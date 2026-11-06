@@ -3,7 +3,8 @@ import { CurrentUserContext } from "../../../../contexts/CurrentUserContext";
 
 export default function Card({ card, onCardClick, onDeleteClick, onCardLike }) {
   const { currentUser } = useContext(CurrentUserContext);
-  const { name, link, likes } = card;
+  const { name, link, likes, owner } = card;
+  const isOwn = owner === currentUser._id;
   const isLiked = likes.some((id) => id === currentUser._id);
 
   const cardLikeButtonClassName = `card__like-button ${
@@ -26,12 +27,14 @@ export default function Card({ card, onCardClick, onDeleteClick, onCardLike }) {
         alt={name}
         onClick={() => onCardClick(card)}
       />
-      <button
-        aria-label="Excluir cartão"
-        className="card__delete-button"
-        type="button"
-        onClick={handleDeleteClick}
-      ></button>
+      {isOwn && (
+        <button
+          aria-label="Excluir cartão"
+          className="card__delete-button"
+          type="button"
+          onClick={handleDeleteClick}
+        ></button>
+      )}
       <div className="card__description">
         <h2 className="card__title">{name}</h2>
         <button

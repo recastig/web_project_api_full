@@ -1,14 +1,16 @@
 import { useContext, useRef } from "react";
 import { CurrentUserContext } from "../../../../../../contexts/CurrentUserContext";
+import useAsyncSubmit from "../../../../../../hooks/useAsyncSubmit";
 
 export default function EditAvatar() {
   const { handleUpdateAvatar } = useContext(CurrentUserContext);
   const avatarInputRef = useRef();
+  const { isLoading, error, submit } = useAsyncSubmit();
 
   function handleSubmit(event) {
     event.preventDefault();
 
-    handleUpdateAvatar({ avatar: avatarInputRef.current.value });
+    submit(() => handleUpdateAvatar({ avatar: avatarInputRef.current.value }));
   }
 
   return (
@@ -27,11 +29,21 @@ export default function EditAvatar() {
         type="url"
         required
       />
-      <span className="popup__error" id="avatar-link-error">
-        Por favor, insira um endereço web.
+      <span
+        className={`popup__error ${error ? "popup__error_visible" : ""}`}
+        id="avatar-link-error"
+        role="alert"
+      >
+        {error}
       </span>
-      <button className="button popup__button" type="submit">
-        Salvar
+      <button
+        className={`button popup__button ${
+          isLoading ? "popup__button_inactive" : ""
+        }`}
+        type="submit"
+        disabled={isLoading}
+      >
+        {isLoading ? "Salvando..." : "Salvar"}
       </button>
     </form>
   );

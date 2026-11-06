@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const User = require("../models/user");
+const { JWT_SECRET } = require("../utils/config");
 
 module.exports.getUsers = (req, res, next) => {
   User.find({})
@@ -126,7 +127,7 @@ module.exports.login = (req, res, next) => {
             message: "E-mail ou senha incorretos",
           });
         }
-        const token = jwt.sign({ _id: user._id }, "super-strong-secret", {
+        const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
           expiresIn: "7d",
         });
         return res.send({ token });

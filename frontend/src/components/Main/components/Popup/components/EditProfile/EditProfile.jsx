@@ -1,5 +1,6 @@
 import { useState, useContext } from "react";
 import { CurrentUserContext } from "../../../../../../contexts/CurrentUserContext";
+import useAsyncSubmit from "../../../../../../hooks/useAsyncSubmit";
 
 export default function EditProfile() {
   const userContext = useContext(CurrentUserContext);
@@ -7,6 +8,7 @@ export default function EditProfile() {
 
   const [name, setName] = useState(currentUser.name);
   const [description, setDescription] = useState(currentUser.about);
+  const { isLoading, error, submit } = useAsyncSubmit();
 
   const handleNameChange = (event) => {
     setName(event.target.value);
@@ -19,7 +21,7 @@ export default function EditProfile() {
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    handleUpdateUser({ name, about: description });
+    submit(() => handleUpdateUser({ name, about: description }));
   };
 
   return (
@@ -34,7 +36,7 @@ export default function EditProfile() {
         <input
           className="popup__input popup__input_type_name"
           id="owner-name"
-          maxLength="40"
+          maxLength="30"
           minLength="2"
           name="userName"
           placeholder="Nome"
@@ -49,7 +51,7 @@ export default function EditProfile() {
         <input
           className="popup__input popup__input_type_description"
           id="owner-description"
-          maxLength="200"
+          maxLength="30"
           minLength="2"
           name="userDescription"
           placeholder="Sobre mim"
@@ -60,8 +62,20 @@ export default function EditProfile() {
         />
         <span className="popup__error" id="owner-description-error"></span>
       </label>
-      <button className="button popup__button" type="submit">
-        Salvar
+      <span
+        className={`popup__error ${error ? "popup__error_visible" : ""}`}
+        role="alert"
+      >
+        {error}
+      </span>
+      <button
+        className={`button popup__button ${
+          isLoading ? "popup__button_inactive" : ""
+        }`}
+        type="submit"
+        disabled={isLoading}
+      >
+        {isLoading ? "Salvando..." : "Salvar"}
       </button>
     </form>
   );
