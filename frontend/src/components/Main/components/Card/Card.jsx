@@ -3,9 +3,22 @@ import { CurrentUserContext } from "../../../../contexts/CurrentUserContext";
 
 export default function Card({ card, onCardClick, onDeleteClick, onCardLike }) {
   const { currentUser } = useContext(CurrentUserContext);
-  const { name, link, likes, owner } = card;
-  const isOwn = owner === currentUser._id;
-  const isLiked = likes.some((id) => id === currentUser._id);
+  const { name, link, likes = [], owner } = card;
+
+  // A API pode entregar owner como ID (string) ou como objeto populado.
+  const ownerId =
+    owner && typeof owner === "object" ? owner._id : owner;
+  const currentUserId = currentUser?._id;
+
+  // Compara os IDs como string e só exibe a lixeira quando ambos existem.
+  const isOwn =
+    ownerId != null &&
+    currentUserId != null &&
+    String(ownerId) === String(currentUserId);
+
+  const isLiked = likes.some(
+    (id) => String(id) === String(currentUserId),
+  );
 
   const cardLikeButtonClassName = `card__like-button ${
     isLiked ? "card__like-button_is-active" : ""
