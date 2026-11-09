@@ -20,6 +20,10 @@ O **Around The U.S.** é uma aplicação web Full Stack onde os usuários podem 
 
 ---
 
+## 📸 Demonstração
+
+![Demonstração do Around The U.S.](frontend/src/assets/around.gif)
+
 ## 🚀 Funcionalidades
 
 - **Autenticação de Usuário:** Cadastro e login seguros utilizando **JWT (JSON Web Tokens)**. As senhas são criptografadas no banco de dados usando `bcryptjs`.
